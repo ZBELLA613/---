@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="page-head">
+    <div>
+        <h2>科研信息管理</h2>
+        <p>统一管理课题、专利、论文与著作信息，并支持统计导出。</p>
+    </div>
+    <div class="actions">
+        {% if current_user.role == 'admin' %}
+        <a href="{{ url_for('project_create') }}">新增课题</a>
+        <a href="{{ url_for('patent_create') }}">新增专利</a>
+        <a href="{{ url_for('publication_create') }}">新增论文/著作</a>
+        {% endif %}
+        <a class="secondary-btn" href="{{ url_for('export_excel', table_name='research') }}">导出 Excel</a>
+        <button class="secondary-btn" onclick="window.print()">打印</button>
+    </div>
+</section>
+
+<section class="panel">
+    <form method="get" class="filter-grid">
+        <input type="text" name="keyword" placeholder="输入科研成果名称关键字" value="{{ keyword }}">
+        <button type="submit">查询</button>
+    </form>
+</section>
+
+<section class="panel">
+    <div class="panel-head"><h3>课题信息</h3></div>
+    <table>
+        <thead><tr><th>教师</th><th>研究方向</th><th>课题编号</th><th>课题名称</th><th>立项单位</th><th>起止时间</th><th>状态</th><th>操作</th></tr></thead>
+        <tbody>
+            {% for item in projects %}
+            <tr>
+                <td>{{ item.employee.name }}</td>
+                <td>{{ item.research_direction }}</td>
+                <td>{{ item.project_no }}</td>
+                <td>{{ item.project_name }}</td>
+                <td>{{ item.sponsor }}</td>
+                <td>{{ item.start_date }} 至 {{ item.end_date }}</td>
+                <td>{{ item.status }}</td>
+                <td class="actions-cell">
+                    {% if current_user.role == 'admin' %}
+                    <a class="text-link" href="{{ url_for('project_edit', record_id=item.id) }}">编辑</a>
+                    <form method="post" action="{{ url_for('project_delete', record_id=item.id) }}"><button type="submit" class="tiny-btn danger-btn">删除</button></form>
+                    {% else %}查看{% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="8" class="empty">暂无课题记录</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section class="panel">
+    <div class="panel-head"><h3>专利信息</h3></div>
+    <table>
+        <thead><tr><th>教师</th><th>专利编号</th><th>专利名称</th><th>授权时间</th><th>专利类型</th><th>发明人</th><th>操作</th></tr></thead>
+        <tbody>
+            {% for item in patents %}
+            <tr>
+                <td>{{ item.employee.name }}</td>
+                <td>{{ item.patent_no }}</td>
+                <td>{{ item.patent_name }}</td>
+                <td>{{ item.grant_date }}</td>
+                <td>{{ item.patent_type }}</td>
+                <td>{{ item.inventors }}</td>
+                <td class="actions-cell">
+                    {% if current_user.role == 'admin' %}
+                    <a class="text-link" href="{{ url_for('patent_edit', record_id=item.id) }}">编辑</a>
+                    <form method="post" action="{{ url_for('patent_delete', record_id=item.id) }}"><button type="submit" class="tiny-btn danger-btn">删除</button></form>
+                    {% else %}查看{% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" class="empty">暂无专利记录</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section class="panel">
+    <div class="panel-head"><h3>论文及著作信息</h3></div>
+    <table>
+        <thead><tr><th>教师</th><th>类型</th><th>作品名称</th><th>期刊/出版社</th><th>发表时间</th><th>作者排序</th><th>ISBN/ISSN</th><th>操作</th></tr></thead>
+        <tbody>
+            {% for item in publications %}
+            <tr>
+                <td>{{ item.employee.name }}</td>
+                <td>{{ item.work_type }}</td>
+                <td>{{ item.work_name }}</td>
+                <td>{{ item.publisher }}</td>
+                <td>{{ item.publish_date }}</td>
+                <td>{{ item.author_order }}</td>
+                <td>{{ item.isbn_issn }}</td>
+                <td class="actions-cell">
+                    {% if current_user.role == 'admin' %}
+                    <a class="text-link" href="{{ url_for('publication_edit', record_id=item.id) }}">编辑</a>
+                    <form method="post" action="{{ url_for('publication_delete', record_id=item.id) }}"><button type="submit" class="tiny-btn danger-btn">删除</button></form>
+                    {% else %}查看{% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="8" class="empty">暂无论文或著作记录</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

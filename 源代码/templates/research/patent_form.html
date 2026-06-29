@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="page-head">
+    <div>
+        <h2>{{ '编辑专利信息' if record else '新增专利信息' }}</h2>
+        <p>记录专利编号、名称、授权时间、类型与发明人。</p>
+    </div>
+</section>
+
+<section class="panel">
+    <form method="post" class="form-grid">
+        <label>
+            教师
+            <select name="employee_id">
+                {% for employee in employees %}
+                <option value="{{ employee.id }}" {% if record and record.employee_id == employee.id %}selected{% endif %}>{{ employee.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            专利编号
+            <input type="text" name="patent_no" value="{{ record.patent_no if record else '' }}" required>
+        </label>
+        <label>
+            专利名称
+            <input type="text" name="patent_name" value="{{ record.patent_name if record else '' }}" required>
+        </label>
+        <label>
+            授权时间
+            <input type="date" name="grant_date" value="{{ record.grant_date if record and record.grant_date else '' }}">
+        </label>
+        <label>
+            专利类型
+            <input type="text" name="patent_type" value="{{ record.patent_type if record else '' }}">
+        </label>
+        <label>
+            发明人
+            <input type="text" name="inventors" value="{{ record.inventors if record else '' }}">
+        </label>
+        <div class="full form-actions">
+            <button type="submit">保存专利</button>
+            <a class="secondary-btn" href="{{ url_for('research_home') }}">返回列表</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

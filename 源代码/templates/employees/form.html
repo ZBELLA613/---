@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="page-head">
+    <div>
+        <h2>{{ '编辑教职工信息' if employee else '新增教职工信息' }}</h2>
+        <p>普通教师只能维护本人资料，管理员可维护全部字段。</p>
+    </div>
+</section>
+
+<section class="panel">
+    <form method="post" class="form-grid">
+        <label>
+            教职工编号
+            <input type="text" name="employee_no" value="{{ employee.employee_no if employee else '' }}" {% if employee and current_user.role != 'admin' %}readonly{% endif %} required>
+        </label>
+        <label>
+            姓名
+            <input type="text" name="name" value="{{ employee.name if employee else '' }}" required>
+        </label>
+        <label>
+            性别
+            <select name="gender">
+                {% for item in gender_options %}
+                <option value="{{ item }}" {% if employee and employee.gender == item %}selected{% endif %}>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            出生日期
+            <input type="date" name="birth_date" value="{{ employee.birth_date if employee and employee.birth_date else '' }}">
+        </label>
+        <label>
+            学历
+            <input type="text" name="education" value="{{ employee.education if employee else '' }}">
+        </label>
+        <label>
+            学位
+            <input type="text" name="degree" value="{{ employee.degree if employee else '' }}">
+        </label>
+        <label>
+            专业
+            <input type="text" name="major" value="{{ employee.major if employee else '' }}">
+        </label>
+        <label>
+            入职时间
+            <input type="date" name="hire_date" value="{{ employee.hire_date if employee and employee.hire_date else '' }}">
+        </label>
+        <label>
+            所属部门
+            <select name="department_id" {% if employee and current_user.role != 'admin' %}disabled{% endif %}>
+                {% for department in departments %}
+                <option value="{{ department.id }}" {% if employee and employee.department_id == department.id %}selected{% endif %}>{{ department.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            职称
+            <input type="text" name="title" value="{{ employee.title if employee else '' }}" {% if employee and current_user.role != 'admin' %}readonly{% endif %}>
+        </label>
+        <label>
+            职务
+            <input type="text" name="position" value="{{ employee.position if employee else '' }}" {% if employee and current_user.role != 'admin' %}readonly{% endif %}>
+        </label>
+        <label>
+            薪资等级
+            <select name="salary_grade" {% if employee and current_user.role != 'admin' %}disabled{% endif %}>
+                <option value="">请选择薪资等级</option>
+                {% for item in salary_grade_options %}
+                <option value="{{ item }}" {% if employee and employee.salary_grade == item %}selected{% endif %}>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            联系电话
+            <input type="text" name="phone" value="{{ employee.phone if employee else '' }}">
+        </label>
+        <label>
+            电子邮箱
+            <input type="email" name="email" value="{{ employee.email if employee else '' }}">
+        </label>
+        <label>
+            状态
+            <select name="status" {% if employee and current_user.role != 'admin' %}disabled{% endif %}>
+                {% for item in employee_statuses %}
+                <option value="{{ item }}" {% if employee and employee.status == item %}selected{% endif %}>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label class="full">
+            奖惩记录
+            <textarea name="reward_punishment" rows="3">{{ employee.reward_punishment if employee else '' }}</textarea>
+        </label>
+        <label class="full">
+            备注
+            <textarea name="notes" rows="3">{{ employee.notes if employee else '' }}</textarea>
+        </label>
+        <div class="full form-actions">
+            <button type="submit">保存信息</button>
+            <a class="secondary-btn" href="{{ url_for('employee_list') }}">返回列表</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

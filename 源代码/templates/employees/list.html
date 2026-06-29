@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="page-head">
+    <div>
+        <h2>教职工基础信息管理</h2>
+        <p>支持多条件组合查询、信息维护与历史状态保留。</p>
+    </div>
+    <div class="actions">
+        {% if current_user.role == 'admin' %}
+        <a href="{{ url_for('employee_create') }}">新增教职工</a>
+        {% endif %}
+        <a class="secondary-btn" href="{{ url_for('export_excel', table_name='employees') }}">导出 Excel</a>
+        <button class="secondary-btn" onclick="window.print()">打印</button>
+    </div>
+</section>
+
+<section class="panel">
+    <form method="get" class="filter-grid">
+        <input type="text" name="employee_no" placeholder="编号" value="{{ filters.employee_no }}">
+        <input type="text" name="name" placeholder="姓名" value="{{ filters.name }}">
+        <select name="department_id">
+            <option value="">全部部门</option>
+            {% for department in departments %}
+            <option value="{{ department.id }}" {% if filters.department_id == department.id|string %}selected{% endif %}>{{ department.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="title" placeholder="职称" value="{{ filters.title }}">
+        <input type="text" name="education" placeholder="学历" value="{{ filters.education }}">
+        <select name="status">
+            <option value="">全部状态</option>
+            {% for item in ['在职','退休','转出','辞退'] %}
+            <option value="{{ item }}" {% if filters.status == item %}selected{% endif %}>{{ item }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">查询</button>
+    </form>
+</section>
+
+<section class="panel">
+    <table>
+        <thead>
+            <tr>
+                <th>编号</th>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>部门</th>
+                <th>职称/职务</th>
+                <th>薪资等级/参考月薪</th>
+                <th>学历学位</th>
+                <th>奖惩记录</th>
+                <th>联系方式</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
+            <tr>
+                <td>{{ employee.employee_no }}</td>
+                <td>{{ employee.name }}</td>
+                <td>{{ employee.gender }}</td>
+                <td>{{ employee.department.name }}</td>
+                <td>{{ employee.title }} / {{ employee.position }}</td>
+                <td>
+                    {{ employee.salary_grade or '未定级' }}<br>
+                    <span class="table-subtext">{{ format_currency(estimate_monthly_salary(employee.salary_grade)) or '待配置' }}</span>
+                </td>
+                <td>{{ employee.education }} / {{ employee.degree }}</td>
+                <td>{{ employee.reward_punishment or '暂无' }}</td>
+                <td>{{ employee.phone }}<br>{{ employee.email }}</td>
+                <td><span class="badge">{{ employee.status }}</span></td>
+                <td class="actions-cell">
+                    <a class="text-link" href="{{ url_for('employee_edit', employee_id=employee.id) }}">编辑</a>
+                    {% if current_user.role == 'admin' %}
+                    <form method="post" action="{{ url_for('employee_deactivate', employee_id=employee.id) }}">
+                        <select name="status">
+                            <option value="退休">退休</option>
+                            <option value="转出">转出</option>
+                            <option value="辞退">辞退</option>
+                        </select>
+                        <button type="submit" class="tiny-btn">注销</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="11" class="empty">暂无数据</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </section>
+{% endblock %}

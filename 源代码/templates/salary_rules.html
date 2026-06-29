@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="page-head">
+    <div>
+        <h2>工资与奖惩规则</h2>
+        <p>展示教职工薪资等级的参考构成，以及系统内采用的奖励、惩处说明。</p>
+    </div>
+</section>
+
+{% if current_employee %}
+<section class="panel">
+    <div class="panel-head"><h3>当前账号对应规则</h3></div>
+    <div class="rule-highlight">
+        <strong>{{ current_employee.name }} / {{ current_employee.salary_grade or '未定级' }}</strong>
+        <span>参考月薪：{{ current_total or '待配置' }}</span>
+    </div>
+    {% if current_rule %}
+    <p class="muted-text">适用岗位：{{ current_rule.applicable_to }}</p>
+    <p class="muted-text">{{ current_rule.description }}</p>
+    {% else %}
+    <p class="muted-text">当前档案尚未配置薪资等级，可由管理员在教职工档案中补充。</p>
+    {% endif %}
+</section>
+{% endif %}
+
+<section class="panel">
+    <div class="panel-head"><h3>薪资等级参考</h3></div>
+    <table>
+        <thead>
+            <tr>
+                <th>等级</th>
+                <th>基础工资</th>
+                <th>岗位津贴</th>
+                <th>绩效工资</th>
+                <th>参考月薪</th>
+                <th>适用范围</th>
+                <th>说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rule in salary_rules %}
+            <tr>
+                <td><span class="badge">{{ rule.grade }}</span></td>
+                <td>{{ format_currency(rule.base_salary) }}</td>
+                <td>{{ format_currency(rule.post_allowance) }}</td>
+                <td>{{ format_currency(rule.performance_salary) }}</td>
+                <td>{{ format_currency(rule.base_salary + rule.post_allowance + rule.performance_salary) }}</td>
+                <td>{{ rule.applicable_to }}</td>
+                <td>{{ rule.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section class="panel-grid">
+    <article class="panel">
+        <div class="panel-head"><h3>奖励规则</h3></div>
+        <table>
+            <thead><tr><th>事项</th><th>影响</th><th>备注</th></tr></thead>
+            <tbody>
+                {% for rule in reward_rules %}
+                <tr>
+                    <td>{{ rule.item }}</td>
+                    <td>{{ rule.impact }}</td>
+                    <td>{{ rule.note }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+    <article class="panel">
+        <div class="panel-head"><h3>惩处规则</h3></div>
+        <table>
+            <thead><tr><th>事项</th><th>影响</th><th>备注</th></tr></thead>
+            <tbody>
+                {% for rule in punishment_rules %}
+                <tr>
+                    <td>{{ rule.item }}</td>
+                    <td>{{ rule.impact }}</td>
+                    <td>{{ rule.note }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+</section>
+{% endblock %}

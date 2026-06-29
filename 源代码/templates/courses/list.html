@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="page-head">
+    <div>
+        <p class="eyebrow">Course Management</p>
+        <h2>课程信息</h2>
+        <p>{{ '教师账号仅显示本人承担或关联的课程。' if current_user.role != 'admin' else '维护全校课程基础数据。' }}</p>
+    </div>
+    {% if current_user.role == 'admin' %}
+    <div class="actions">
+        <a href="{{ url_for('course_create') }}">新增课程</a>
+    </div>
+    {% endif %}
+</section>
+
+<section class="panel">
+    <table>
+        <thead>
+            <tr>
+                <th>课程编号</th>
+                <th>课程名称</th>
+                <th>性质</th>
+                <th>学分</th>
+                <th>学时</th>
+                <th>适用专业</th>
+                {% if current_user.role == 'admin' %}<th>操作</th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course.course_no }}</td>
+                <td>{{ course.name }}</td>
+                <td><span class="badge">{{ course.nature }}</span></td>
+                <td>{{ course.credits }}</td>
+                <td>{{ course.hours }}</td>
+                <td>{{ course.applicable_major }}</td>
+                {% if current_user.role == 'admin' %}
+                <td><a class="text-link" href="{{ url_for('course_edit', course_id=course.id) }}">编辑</a></td>
+                {% endif %}
+            </tr>
+            {% else %}
+            <tr><td colspan="7" class="empty">暂无课程数据</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}高校人事信息管理系统{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="{% if current_user %}logged-in{% else %}guest{% endif %}">
+    <div class="{% if current_user %}app-shell{% else %}public-shell{% endif %}">
+        {% if current_user %}
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">HR</div>
+                <div>
+                    <h1>高校人事系统</h1>
+                    <p>Personnel Information Platform</p>
+                </div>
+            </div>
+            <nav class="nav">
+                {% if current_user.role == 'admin' %}
+                <a href="{{ url_for('dashboard') }}">仪表盘</a>
+                <a href="{{ url_for('employee_list') }}">全校档案管理</a>
+                <a href="{{ url_for('course_list') }}">课程管理</a>
+                <a href="{{ url_for('teaching_list') }}">授课任务管理</a>
+                <a href="{{ url_for('research_home') }}">科研成果管理</a>
+                <a href="{{ url_for('salary_rules') }}">工资与奖惩规则</a>
+                <a href="{{ url_for('statistics') }}">统计分析</a>
+                {% else %}
+                <a href="{{ url_for('dashboard') }}">仪表盘</a>
+                <a href="{{ url_for('employee_list') }}">我的档案</a>
+                <a href="{{ url_for('course_list') }}">我的课程</a>
+                <a href="{{ url_for('research_home') }}">我的科研</a>
+                <a href="{{ url_for('salary_rules') }}">工资与奖惩规则</a>
+                {% endif %}
+            </nav>
+            <div class="account-card">
+                <div class="account-name">{{ current_user.username }}</div>
+                <div class="account-meta">{{ '管理员' if current_user.role == 'admin' else '教师账号' }}</div>
+                <a class="ghost-btn" href="{{ url_for('logout') }}">退出登录</a>
+            </div>
+        </aside>
+        {% endif %}
+
+        <main class="content {% if not current_user %}auth-layout{% endif %}">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-stack">
+                {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

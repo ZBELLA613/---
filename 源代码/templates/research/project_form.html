@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="page-head">
+    <div>
+        <h2>{{ '编辑课题信息' if record else '新增课题信息' }}</h2>
+        <p>记录研究方向、项目编号、立项单位与结题状态。</p>
+    </div>
+</section>
+
+<section class="panel">
+    <form method="post" class="form-grid">
+        <label>
+            教师
+            <select name="employee_id">
+                {% for employee in employees %}
+                <option value="{{ employee.id }}" {% if record and record.employee_id == employee.id %}selected{% endif %}>{{ employee.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            研究方向
+            <input type="text" name="research_direction" value="{{ record.research_direction if record else '' }}" required>
+        </label>
+        <label>
+            课题编号
+            <input type="text" name="project_no" value="{{ record.project_no if record else '' }}" required>
+        </label>
+        <label>
+            课题名称
+            <input type="text" name="project_name" value="{{ record.project_name if record else '' }}" required>
+        </label>
+        <label>
+            立项单位
+            <input type="text" name="sponsor" value="{{ record.sponsor if record else '' }}">
+        </label>
+        <label>
+            立项时间
+            <input type="date" name="start_date" value="{{ record.start_date if record and record.start_date else '' }}">
+        </label>
+        <label>
+            结题时间
+            <input type="date" name="end_date" value="{{ record.end_date if record and record.end_date else '' }}">
+        </label>
+        <label>
+            状态
+            <select name="status">
+                {% for item in ['进行中','结题'] %}
+                <option value="{{ item }}" {% if record and record.status == item %}selected{% endif %}>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <div class="full form-actions">
+            <button type="submit">保存课题</button>
+            <a class="secondary-btn" href="{{ url_for('research_home') }}">返回列表</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

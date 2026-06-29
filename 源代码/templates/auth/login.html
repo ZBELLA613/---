@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}登录 - 高校人事信息管理系统{% endblock %}
+{% block content %}
+<section class="login-panel">
+    <div class="login-hero">
+        <p class="eyebrow">University HR Platform</p>
+        <h2>高校人事信息管理系统</h2>
+        <p>面向学校行政与教师日常使用，支持档案、教学、科研和导出管理。</p>
+        <div class="login-notes">
+            <span>管理员账号可用于全局管理。</span>
+            <span>教师账号由系统自动分配，登录后仅能查看本人数据。</span>
+        </div>
+    </div>
+    <form method="post" class="login-card form-grid">
+        <label>
+            用户名
+            <input type="text" name="username" placeholder="请输入账号" required>
+        </label>
+        <label>
+            密码
+            <input type="password" name="password" placeholder="请输入密码" required>
+        </label>
+        <button type="submit">登录系统</button>
+    </form>
+</section>
+{% endblock %}

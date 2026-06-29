@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero-banner">
+    <div>
+        <p class="eyebrow">School Admin Console</p>
+        <h2>{{ current_user.employee.name if current_user.employee else current_user.username }}，欢迎使用高校人事平台</h2>
+        <p>{{ '管理员可查看全部数据。' if current_user.role == 'admin' else '当前账号仅能查看本人相关数据。' }}</p>
+    </div>
+    <div class="hero-actions">
+        <a class="secondary-btn" href="{{ url_for('export_excel', table_name='employees') }}">导出教职工</a>
+        <a class="secondary-btn" href="{{ url_for('salary_rules') }}">查看工资与奖惩规则</a>
+        {% if current_user.role == 'admin' %}
+        <a class="secondary-btn" href="{{ url_for('export_excel', table_name='teaching') }}">导出教学任务</a>
+        <a class="secondary-btn" href="{{ url_for('export_excel', table_name='research') }}">导出科研成果</a>
+        {% endif %}
+    </div>
+</section>
+
+<section class="metrics">
+    <article class="metric-card"><strong>{{ employee_count }}</strong><span>可见教职工</span></article>
+    <article class="metric-card"><strong>{{ course_count }}</strong><span>可见课程</span></article>
+    <article class="metric-card"><strong>{{ teaching_count }}</strong><span>可见授课任务</span></article>
+    <article class="metric-card"><strong>{{ research_count }}</strong><span>可见科研成果</span></article>
+</section>
+
+<section class="panel-grid">
+    {% if current_employee %}
+    <article class="panel">
+        <div class="panel-head"><h3>我的薪资参考</h3></div>
+        <div class="rule-highlight">
+            <strong>{{ current_employee.salary_grade or '未定级' }}</strong>
+            <span>参考月薪：{{ current_salary_total or '待配置' }}</span>
+        </div>
+        {% if current_salary_rule %}
+        <p class="muted-text">岗位范围：{{ current_salary_rule.applicable_to }}</p>
+        <p class="muted-text">构成：基础工资 {{ current_salary_rule.base_salary }} 元，岗位津贴 {{ current_salary_rule.post_allowance }} 元，绩效工资 {{ current_salary_rule.performance_salary }} 元。</p>
+        {% else %}
+        <p class="muted-text">当前教职工尚未配置薪资等级，可在档案中补充后自动显示。</p>
+        {% endif %}
+    </article>
+    {% endif %}
+    <article class="panel">
+        <div class="panel-head"><h3>部门分布</h3></div>
+        <table>
+            <thead><tr><th>部门</th><th>人数</th></tr></thead>
+            <tbody>
+                {% for name, count in department_stats %}
+                <tr><td>{{ name }}</td><td>{{ count }}</td></tr>
+                {% else %}
+                <tr><td colspan="2" class="empty">暂无数据</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+    <article class="panel">
+        <div class="panel-head"><h3>职称分布</h3></div>
+        <table>
+            <thead><tr><th>职称</th><th>人数</th></tr></thead>
+            <tbody>
+                {% for title, count in title_stats %}
+                <tr><td>{{ title }}</td><td>{{ count }}</td></tr>
+                {% else %}
+                <tr><td colspan="2" class="empty">暂无数据</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+</section>
+{% endblock %}

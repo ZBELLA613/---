@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="page-head">
+    <div>
+        <h2>{{ '编辑授课任务' if assignment else '新增授课任务' }}</h2>
+        <p>建立课程与教师的授课关系，支持教学任务查询。</p>
+    </div>
+</section>
+
+<section class="panel">
+    <form method="post" class="form-grid">
+        <label>
+            授课教师
+            <select name="employee_id">
+                {% for employee in employees %}
+                <option value="{{ employee.id }}" {% if assignment and assignment.employee_id == employee.id %}selected{% endif %}>{{ employee.name }}（{{ employee.employee_no }}）</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            课程
+            <select name="course_id">
+                {% for course in courses %}
+                <option value="{{ course.id }}" {% if assignment and assignment.course_id == course.id %}selected{% endif %}>{{ course.name }}（{{ course.course_no }}）</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            授课班级
+            <input type="text" name="class_name" value="{{ assignment.class_name if assignment else '' }}" required>
+        </label>
+        <label>
+            学生人数
+            <input type="number" name="student_count" value="{{ assignment.student_count if assignment else '0' }}">
+        </label>
+        <label>
+            学期
+            <input type="text" name="semester" value="{{ assignment.semester if assignment else '' }}" placeholder="例：2025-2026-1" required>
+        </label>
+        <div class="full form-actions">
+            <button type="submit">保存任务</button>
+            <a class="secondary-btn" href="{{ url_for('teaching_list') }}">返回列表</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

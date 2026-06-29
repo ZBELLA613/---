@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="page-head">
+    <div>
+        <h2>查询统计分析</h2>
+        <p>按部门、职称、学历与科研成果类型提供汇总统计。</p>
+    </div>
+</section>
+
+<section class="panel-grid">
+    <article class="panel">
+        <div class="panel-head"><h3>部门人数</h3></div>
+        <table>
+            <thead><tr><th>部门</th><th>人数</th></tr></thead>
+            <tbody>
+                {% for name, count in department_stats %}
+                <tr><td>{{ name }}</td><td>{{ count }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+    <article class="panel">
+        <div class="panel-head"><h3>职称分布</h3></div>
+        <table>
+            <thead><tr><th>职称</th><th>人数</th></tr></thead>
+            <tbody>
+                {% for name, count in title_stats %}
+                <tr><td>{{ name or '未填写' }}</td><td>{{ count }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+    <article class="panel">
+        <div class="panel-head"><h3>学历分布</h3></div>
+        <table>
+            <thead><tr><th>学历</th><th>人数</th></tr></thead>
+            <tbody>
+                {% for name, count in education_stats %}
+                <tr><td>{{ name or '未填写' }}</td><td>{{ count }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+    <article class="panel">
+        <div class="panel-head"><h3>科研成果数量</h3></div>
+        <table>
+            <tbody>
+                <tr><td>课题</td><td>{{ research_stats.projects }}</td></tr>
+                <tr><td>专利</td><td>{{ research_stats.patents }}</td></tr>
+                <tr><td>论文/著作</td><td>{{ research_stats.publications }}</td></tr>
+            </tbody>
+        </table>
+    </article>
+</section>
+{% endblock %}

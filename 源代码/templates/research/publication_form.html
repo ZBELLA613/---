@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="page-head">
+    <div>
+        <h2>{{ '编辑论文/著作信息' if record else '新增论文/著作信息' }}</h2>
+        <p>记录发表期刊或出版社、发表时间、作者排序与 ISBN/ISSN。</p>
+    </div>
+</section>
+
+<section class="panel">
+    <form method="post" class="form-grid">
+        <label>
+            教师
+            <select name="employee_id">
+                {% for employee in employees %}
+                <option value="{{ employee.id }}" {% if record and record.employee_id == employee.id %}selected{% endif %}>{{ employee.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            类型
+            <select name="work_type">
+                {% for item in ['论文','著作'] %}
+                <option value="{{ item }}" {% if record and record.work_type == item %}selected{% endif %}>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            作品名称
+            <input type="text" name="work_name" value="{{ record.work_name if record else '' }}" required>
+        </label>
+        <label>
+            发表期刊 / 出版社
+            <input type="text" name="publisher" value="{{ record.publisher if record else '' }}">
+        </label>
+        <label>
+            发表时间
+            <input type="date" name="publish_date" value="{{ record.publish_date if record and record.publish_date else '' }}">
+        </label>
+        <label>
+            作者排序
+            <input type="text" name="author_order" value="{{ record.author_order if record else '' }}">
+        </label>
+        <label>
+            ISBN/ISSN
+            <input type="text" name="isbn_issn" value="{{ record.isbn_issn if record else '' }}">
+        </label>
+        <div class="full form-actions">
+            <button type="submit">保存成果</button>
+            <a class="secondary-btn" href="{{ url_for('research_home') }}">返回列表</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

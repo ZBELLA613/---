@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="page-head">
+    <div>
+        <h2>教师授课管理</h2>
+        <p>记录教师、课程、班级、学生人数与学期安排。</p>
+    </div>
+    <div class="actions">
+        {% if current_user.role == 'admin' %}
+        <a href="{{ url_for('teaching_create') }}">新增授课任务</a>
+        {% endif %}
+        <a class="secondary-btn" href="{{ url_for('export_excel', table_name='teaching') }}">导出 Excel</a>
+        <button class="secondary-btn" onclick="window.print()">打印</button>
+    </div>
+</section>
+
+<section class="panel">
+    <form method="get" class="filter-grid">
+        <input type="text" name="course_name" placeholder="课程名称" value="{{ filters.course_name }}">
+        <input type="text" name="teacher_name" placeholder="授课教师" value="{{ filters.teacher_name }}">
+        <button type="submit">查询</button>
+    </form>
+</section>
+
+<section class="panel">
+    <table>
+        <thead>
+            <tr>
+                <th>教师编号</th>
+                <th>教师姓名</th>
+                <th>课程编号</th>
+                <th>课程名称</th>
+                <th>班级</th>
+                <th>学生人数</th>
+                <th>学期</th>
+                {% if current_user.role == 'admin' %}<th>操作</th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in assignments %}
+            <tr>
+                <td>{{ item.employee.employee_no }}</td>
+                <td>{{ item.employee.name }}</td>
+                <td>{{ item.course.course_no }}</td>
+                <td>{{ item.course.name }}</td>
+                <td>{{ item.class_name }}</td>
+                <td>{{ item.student_count }}</td>
+                <td>{{ item.semester }}</td>
+                {% if current_user.role == 'admin' %}
+                <td><a class="text-link" href="{{ url_for('teaching_edit', assignment_id=item.id) }}">编辑</a></td>
+                {% endif %}
+            </tr>
+            {% else %}
+            <tr><td colspan="8" class="empty">暂无授课安排</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}
